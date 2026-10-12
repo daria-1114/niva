@@ -6,10 +6,7 @@ import com.dx.niva.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -31,6 +28,10 @@ public class AuthController {
     public ResponseEntity<Map<String,String>> login(@Valid @RequestBody LoginRequest request){
         String token = authService.login(request);
         return ResponseEntity.ok(Map.of("token",token));
+    }
+    @GetMapping("/me")
+    public ResponseEntity<String> me() {
+        return ResponseEntity.ok("You are authenticated!");
     }
 
 
