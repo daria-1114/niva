@@ -37,4 +37,16 @@ public class NoteController {
     public ResponseEntity<List<NoteResponse>> getNotesByCategory(@PathVariable Category category, @AuthenticationPrincipal User user){
         return ResponseEntity.ok(noteService.getAllNotesByCategory(user, category));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<NoteResponse> updateNOte(@PathVariable Long id, @Valid @RequestBody CreateNoteRequest request, @AuthenticationPrincipal User user){
+        NoteResponse note = noteService.updateNote(id, request,user);
+        return ResponseEntity.ok(note);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNote(@PathVariable Long id,
+                                           @AuthenticationPrincipal User user) {
+        noteService.deleteNote(id, user);
+        return ResponseEntity.noContent().build();
+    }
+
 }

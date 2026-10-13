@@ -1,5 +1,6 @@
 package com.dx.niva.service;
 
+import com.dx.niva.NoteNotFoundException;
 import com.dx.niva.dto.CreateNoteRequest;
 import com.dx.niva.dto.NoteResponse;
 import com.dx.niva.entity.Note;
@@ -46,6 +47,25 @@ public class NoteService {
         return notes.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public NoteResponse updateNote(Long id, CreateNoteRequest request, User user){
+        Note note = noteRepository.findByIdAndUser(id, user)
+                .orElseThrow(()-> new NoteNotFoundException("Note not found"));
+        String title = request.getTitle();
+        if(title == null || title.isBlank()){
+            title = "Untitled note";
+        }
+        note.setTitle(title);
+        note.setContent(request.getContent());
+        note.setCategory(request.getCategory());
+        Note saved = noteRepository.save(note);
+        return toResponse(saved);
+    }
+    public void deleteNote(Long id, User user){
+        Note note = noteRepository.findByIdAndUser(id, user)
+                .orElseThrow(()-> new NoteNotFoundException("Note not found"));
+        noteRepository.delete(note);
     }
 
     private NoteResponse toResponse(Note note){
