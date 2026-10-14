@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function LoginForm(){
+function LoginForm({onLoginSuccess}){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const handleSubmit = async (e) =>{
@@ -13,7 +13,7 @@ function LoginForm(){
         if(response.ok){
             const data = await response.json();
             localStorage.setItem('token', data.token);
-            alert("Login successful")
+            onLoginSuccess();
         }else{
             const errorText = await response.text();
             alert('Login failed: '+errorText);
