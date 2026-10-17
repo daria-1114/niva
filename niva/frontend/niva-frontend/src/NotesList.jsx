@@ -1,24 +1,31 @@
 import { useState,useEffect } from "react";
 import { apiFetch } from "./api";
 
-function NotesList({refreshKey}){
+function NotesList({refreshKey, selectedCategory}){
     const[notes, setNotes] = useState([]);
     const [editingId, setEditingId] = useState(null);
     const [editTitle, setEditTitle] = useState('');
     const [editContent, setEditContent] = useState('');
     const [editCategory, setEditCategory] = useState('WORK');
 
-        async function fetchNotes(){
-            const response = await apiFetch("/notes");
-            if(response.ok){
-                const data = await response.json();
-                setNotes(data);
-            }
+         async function fetchNotes() {
+        const path = selectedCategory
+            ? `/notes/category/${selectedCategory}`
+            : '/notes';
+        const response = await apiFetch(path);
+        if (response.ok) {
+            const data = await response.json();
+            const sorted = [...data].sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
+            setNotes(sorted);
         }
+    }
+
        
         useEffect(() =>{
             fetchNotes();
-        },[refreshKey]);
+        },[refreshKey, selectedCategory]);
 
     async function handleDelete(id){
         const response = await apiFetch(`/notes/${id}`,{
@@ -53,8 +60,8 @@ function NotesList({refreshKey}){
         }
     }
     return (
-        <div>
-            <h2>My Notes</h2>
+        <div className="notes-main">
+            <h2>{selectedCategory ? selectedCategory : 'All Notes'}</h2>
             {notes.length === 0 && <p>No notes yet.</p>}
             <ul>
                 {notes.map((note) => (

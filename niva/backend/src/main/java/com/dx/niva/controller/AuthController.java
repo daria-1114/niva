@@ -1,11 +1,14 @@
 package com.dx.niva.controller;
 
+import com.dx.niva.dto.UserResponse;
 import com.dx.niva.dto.auth.LoginRequest;
 import com.dx.niva.dto.auth.RegisterRequest;
+import com.dx.niva.entity.User;
 import com.dx.niva.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -30,8 +33,9 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("token",token));
     }
     @GetMapping("/me")
-    public ResponseEntity<String> me() {
-        return ResponseEntity.ok("You are authenticated!");
+    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
+        UserResponse response = new UserResponse(user.getEmail(), user.getFirstName(), user.getLastName());
+        return ResponseEntity.ok(response);
     }
 
 

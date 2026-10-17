@@ -4,10 +4,15 @@ import RegisterForm from './RegisterForm'
 import LoginForm from './LoginForm'
 import NotesList from './NotesList'
 import CreateNoteForm from './CreateNoteForm'
+import AccountMenu from './AccountMenu'
+import Sidebar from './Sidebar'
+import AccountView from './AccountView'
 
 const App = ()=>{
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showAccount, setShowAccount] = useState(false);
 
   const handleNoteCreated = () => {
     setRefreshKey(refreshKey + 1);
@@ -32,11 +37,21 @@ const App = ()=>{
   }
   return (
     <div>
-      <h1>Niva</h1>
-      <button onClick={handleLogout}>Log out</button>
-      <CreateNoteForm onNoteCreated={handleNoteCreated} />
-      <hr />
-      <NotesList refreshKey={refreshKey} />
+      <div className="top-bar">
+        <h1>Niva</h1>
+        <AccountMenu onLogout={handleLogout} onShowAccount={() => setShowAccount(true)} />
+      </div>
+      {showAccount ? (
+        <AccountView onBack={() => setShowAccount(false)} />
+      ) : (
+        <>
+          <CreateNoteForm onNoteCreated={handleNoteCreated} />
+          <div className="app-layout">
+            <Sidebar selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+            <NotesList refreshKey={refreshKey} selectedCategory={selectedCategory} />
+          </div>
+        </>
+      )}
     </div>
   )
 }
